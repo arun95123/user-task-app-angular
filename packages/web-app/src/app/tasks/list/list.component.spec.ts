@@ -52,6 +52,7 @@ describe('ListComponent', () => {
   let loader: HarnessLoader;
   let component: ListComponent;
   let tasksService: TasksService;
+  let storageService: StorageService;
   let router: Router;
 
   beforeEach(() => {
@@ -79,6 +80,7 @@ describe('ListComponent', () => {
   beforeEach(() => {
     router = TestBed.inject(Router);
     tasksService = TestBed.inject(TasksService);
+    storageService = TestBed.inject(StorageService);
     fixture = TestBed.createComponent(ListComponent);
     component = fixture.componentInstance;
     loader = TestbedHarnessEnvironment.loader(fixture);
@@ -119,6 +121,7 @@ describe('ListComponent', () => {
   it(`should mark a task as complete when done button is clicked`, async () => {
     expect(tasksService.tasks[0].completed).toBe(false);
     jest.spyOn(component, 'onDoneTask');
+    jest.spyOn(storageService, 'updateTaskItem');
     const doneButton = await loader.getHarness(
       MatButtonHarness.with({ selector: '[data-testid="complete-task"]' }),
     );
@@ -127,11 +130,16 @@ describe('ListComponent', () => {
     fixture.detectChanges();
     expect(component.onDoneTask).toHaveBeenCalledTimes(1);
     expect(tasksService.tasks[0].completed).toBe(true);
+    expect(storageService.updateTaskItem).toHaveBeenCalledWith(
+      tasksService.tasks[0],
+    );
   });
 
   it(`should mark a task as archived when delete button is clicked`, async () => {
     expect(tasksService.tasks[0].isArchived).toBe(false);
     jest.spyOn(component, 'onDeleteTask');
+    jest.spyOn(tasksService, 'filterTask');
+    jest.spyOn(storageService, 'updateTaskItem');
     const deleteButton = await loader.getHarness(
       MatButtonHarness.with({ selector: '[data-testid="delete-task"]' }),
     );
@@ -140,7 +148,13 @@ describe('ListComponent', () => {
     fixture.detectChanges();
     expect(component.onDeleteTask).toHaveBeenCalledTimes(1);
     expect(tasksService.tasks[0].isArchived).toBe(true);
+    expect(tasksService.filterTask).toHaveBeenCalledWith('isArchived');
+    expect(storageService.updateTaskItem).toHaveBeenCalledWith(
+      tasksService.tasks[0],
+    );
   });
 
+  // Since removal is handled by task service not adding an explcit test for this.
+  // The logic on list component is just making the task archived and calling the filterTask method.
   it.todo(`should not display archived tasks after deleting them`);
 });
