@@ -7,6 +7,16 @@ import {
 import { StorageService } from '../storage/storage.service';
 import { Task, TaskPriority, generateTask } from '@take-home/shared';
 
+jest.mock('fuse.js', () => ({
+  default: jest.fn().mockImplementation(() => ({
+    search: jest.fn().mockReturnValue([
+      {
+        item: generateTask({ title: 'Fuzzy searched item' }),
+      },
+    ]),
+  })),
+}));
+
 class MockStorageService {
   getTasks(): Promise<Task[]> {
     return Promise.resolve([]);
@@ -133,6 +143,7 @@ describe('TasksService', () => {
       expect(service.tasks.length).toEqual(2);
     });
 
-    it.todo('should search task list for a fuzzy match on title');
+    // Since the searchTask method uses a library, there is no point in testing the library itself.
+    +it.todo('should search task list for a fuzzy match on title');
   });
 });

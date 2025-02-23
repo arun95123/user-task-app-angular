@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import Fuse from 'fuse.js';
 import { Task } from '@take-home/shared';
 import { StorageService } from '../storage/storage.service';
 
@@ -47,8 +48,9 @@ export class TasksService {
 
   async searchTask(search: string): Promise<void> {
     const allTasks = await this.storageService.getTasks();
+    const fuse = new Fuse(allTasks, { keys: ['title'] });
     if (search) {
-      this.tasks = allTasks.filter((task) => task.title.includes(search));
+      this.tasks = fuse.search(search).map((result) => result.item);
     } else {
       this.tasks = allTasks;
     }
