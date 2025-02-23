@@ -29,11 +29,14 @@ export class TasksService {
         this.tasks = this.tasks.filter((task) => !task.isArchived);
         break;
       case 'priority':
-        // TODO: add fitler for taks with High Priority
-        throw new Error('Not implemented');
+        this.tasks = this.tasks.filter((task) => task.priority === 'HIGH');
+        break;
       case 'scheduledDate':
-        // TODO: add fitler for tasks Due Today
-        throw new Error('Not implemented');
+        this.tasks = this.tasks.filter(
+          (task) =>
+            task.scheduledDate.toDateString() === new Date().toDateString(),
+        );
+        break;
       case 'completed':
         this.tasks = this.tasks.filter((task) => !task.completed);
     }

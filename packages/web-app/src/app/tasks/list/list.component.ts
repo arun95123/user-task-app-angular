@@ -35,7 +35,7 @@ export class ListComponent {
   }
 
   onAddTask(): void {
-    this.router.navigate(['/add']);
+    this.router.navigate(['add']);
   }
 
   private getTaskList(): void {
