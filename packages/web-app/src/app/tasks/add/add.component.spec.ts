@@ -12,6 +12,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Router } from '@angular/router';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { HarnessLoader } from '@angular/cdk/testing';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 class MockStorageService {
   updateTaskItem(): void {
@@ -37,6 +39,8 @@ describe('AddComponent', () => {
         MatFormFieldModule,
         MatInputModule,
         MatSelectModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
       ],
       declarations: [AddComponent],
       providers: [{ provide: StorageService, useClass: MockStorageService }],
@@ -88,14 +92,40 @@ describe('AddComponent', () => {
     expect(await addButton.isDisabled()).toBeFalsy();
   });
 
+  it(`should prevent adding task without a valid date`, async () => {
+    const addButton = await loader.getHarness(
+      MatButtonHarness.with({ selector: '[data-testid="add-task"]' }),
+    );
+    expect(await addButton.isDisabled()).toBeTruthy();
+    component['addTaskForm'].controls['title'].setValue('Some Valid Title');
+    fixture.detectChanges();
+    component['addTaskForm'].controls['scheduledDate'].setValue(
+      new Date(new Date().setDate(new Date().getDate() - 1)),
+    );
+    fixture.detectChanges();
+    expect(await addButton.isDisabled()).toBeTruthy();
+    component['addTaskForm'].controls['scheduledDate'].setValue(
+      new Date(new Date().setDate(new Date().getDate() + 8)),
+    );
+    fixture.detectChanges();
+    expect(await addButton.isDisabled()).toBeTruthy();
+    component['addTaskForm'].controls['scheduledDate'].setValue(
+      new Date(new Date().setDate(new Date().getDate() + 1)),
+    );
+    fixture.detectChanges();
+    expect(await addButton.isDisabled()).toBeFalsy();
+  });
+
   it(`should create a new task for a valid submission and navigate home`, async () => {
     jest.spyOn(router, 'navigateByUrl').mockResolvedValue(true);
     jest.spyOn(component, 'onSubmit');
     jest.spyOn(storageService, 'updateTaskItem').mockResolvedValue();
+    const currentDate = new Date();
     component['addTaskForm'].controls['title'].setValue('Adding a test task');
     component['addTaskForm'].controls['description'].setValue(
       'This task should be added to the list',
     );
+    component['addTaskForm'].controls['scheduledDate'].setValue(currentDate);
     fixture.detectChanges();
     const addButton = await loader.getHarness(
       MatButtonHarness.with({ selector: '[data-testid="add-task"]' }),
@@ -109,6 +139,7 @@ describe('AddComponent', () => {
         isArchived: false,
         title: 'Adding a test task',
         description: 'This task should be added to the list',
+        scheduledDate: currentDate,
       }),
     );
     expect(router.navigateByUrl).toHaveBeenCalledWith('/');

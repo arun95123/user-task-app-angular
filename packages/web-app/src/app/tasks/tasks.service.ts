@@ -32,10 +32,13 @@ export class TasksService {
         this.tasks = this.tasks.filter((task) => task.priority === 'HIGH');
         break;
       case 'scheduledDate':
-        this.tasks = this.tasks.filter(
-          (task) =>
-            task.scheduledDate.toDateString() === new Date().toDateString(),
-        );
+        this.tasks = this.tasks.filter((task) => {
+          if (!task.scheduledDate) {
+            return false;
+          }
+          const scheduledDate = new Date(task.scheduledDate);
+          return scheduledDate.toDateString() === new Date().toDateString();
+        });
         break;
       case 'completed':
         this.tasks = this.tasks.filter((task) => !task.completed);

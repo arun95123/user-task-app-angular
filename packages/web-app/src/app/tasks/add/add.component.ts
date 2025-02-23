@@ -12,6 +12,12 @@ import { faker } from '@faker-js/faker';
   standalone: false,
 })
 export class AddComponent {
+  readonly currentDate = new Date();
+
+  readonly maxScheduledDate = new Date(
+    new Date().setDate(this.currentDate.getDate() + 7),
+  );
+
   protected addTaskForm: FormGroup = new FormGroup({
     title: new FormControl(null, {
       validators: [Validators.required, Validators.minLength(10)],
@@ -23,6 +29,7 @@ export class AddComponent {
         validators: Validators.required,
       },
     ),
+    scheduledDate: new FormControl(null),
   });
   protected priorities = Object.values(TaskPriority);
 
@@ -33,8 +40,6 @@ export class AddComponent {
       ...this.addTaskForm.getRawValue(),
       uuid: faker.string.uuid(),
       isArchived: false,
-      // TODO: allow user to set scheduled date using MatDatePicker
-      scheduledDate: new Date(),
     };
 
     this.storageService.updateTaskItem(newTask);
