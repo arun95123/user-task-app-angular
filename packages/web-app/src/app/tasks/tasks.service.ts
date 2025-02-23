@@ -42,13 +42,12 @@ export class TasksService {
     }
   }
 
-  searchTask(search: string): void {
+  async searchTask(search: string): Promise<void> {
+    const allTasks = await this.storageService.getTasks();
     if (search) {
-      // TODO: filter tasks which title include search value
-      throw new Error('Not implemented');
+      this.tasks = allTasks.filter((task) => task.title.includes(search));
     } else {
-      // TODO: reload all tasks from storage
-      throw new Error('Not implemented');
+      this.tasks = allTasks;
     }
   }
 }

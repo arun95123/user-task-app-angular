@@ -113,21 +113,23 @@ describe('TasksService', () => {
   });
 
   describe('searchTask', () => {
-    it('should search task list for title with search term', () => {
+    it('should search task list for title with search term', async () => {
       service.tasks = [
         generateTask({ title: 'Take home assignment' }),
         generateTask({ title: 'Thank you for your time' }),
       ];
-      service.searchTask('home');
+      storageService.getTasks = jest.fn().mockResolvedValue(service.tasks);
+      await service.searchTask('home');
       expect(service.tasks.length).toEqual(1);
     });
 
-    it('should reset task list if search term is empty', () => {
+    it('should reset task list if search term is empty', async () => {
       service.tasks = [
         generateTask({ title: 'Take home assignment' }),
         generateTask({ title: 'Thank you for your time' }),
       ];
-      service.searchTask('');
+      storageService.getTasks = jest.fn().mockResolvedValue(service.tasks);
+      await service.searchTask('');
       expect(service.tasks.length).toEqual(2);
     });
 
