@@ -93,7 +93,7 @@ describe('ListComponent', () => {
 
   it('should display the title', () => {
     const title = fixture.debugElement.query(By.css('h1'));
-    expect(title.nativeElement.textContent).toEqual('My Daily Tasks');
+    expect(title.nativeElement.textContent).toEqual('Tasks');
   });
 
   it(`should display total number of tasks`, () => {
