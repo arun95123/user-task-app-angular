@@ -1,6 +1,12 @@
 .container {
   justify-content: space-around;
 
+  padding: 10px;
+  background: white;
+  width: 100%;
+  margin: 5px 0;
+  border-radius: 5px;
+
   .tasks {
     display: inline-flex;
     flex-direction: column;

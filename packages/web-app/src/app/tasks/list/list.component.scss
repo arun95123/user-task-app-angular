@@ -1,10 +1,34 @@
+:host {
+  --success-color: lightgreen;
+}
+
 .container {
   justify-content: space-around;
+  margin: 2rem;
 
-  .action-button-row {
+  &--header {
     display: flex;
-    justify-content: flex-start;
-    gap: var(--layout-gap-size);
+    justify-content: space-between;
+    align-items: center;
+
+    h1 {
+      margin: 0;
+    }
+
+    h3 {
+      margin: 1rem 0;
+    }
+
+    .action-button {
+      display: flex;
+      justify-content: flex-start;
+      gap: var(--layout-gap-size);
+      background-color: blue;
+      button {
+        padding: 20px;
+        color: white;
+      }
+    }
   }
 
   .tasks {
@@ -15,6 +39,7 @@
     gap: var(--layout-gap-size);
 
     mat-card {
+      transition: background-color 1000ms linear;
       padding: var(--layout-padding);
       &.complete {
         background-color: var(--success-color);

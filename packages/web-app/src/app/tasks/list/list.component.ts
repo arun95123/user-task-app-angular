@@ -5,12 +5,27 @@ import { take } from 'rxjs';
 import { TasksService } from '../tasks.service';
 import { Router } from '@angular/router';
 import { StorageService } from '../../storage/storage.service';
+import {
+  trigger,
+  state,
+  style,
+  animate,
+  transition,
+} from '@angular/animations';
 
 @Component({
   selector: 'take-home-list-component',
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
   standalone: false,
+  // TODO Fix animation showing up after adding task
+  animations: [
+    // the fade-in/fade-out animation.
+    trigger('simpleFadeAnimation', [
+      // fade out when destroyed. this could also be written as transition('void => *')
+      transition(':leave', animate(400, style({ opacity: 0 }))),
+    ]),
+  ],
 })
 export class ListComponent {
   constructor(
